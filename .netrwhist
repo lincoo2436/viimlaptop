@@ -1,0 +1,11 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =9
+let g:netrw_dirhist_9='/home/lincoo/software/2-plan'
+let g:netrw_dirhist_8='/home/lincoo/software'
+let g:netrw_dirhist_7='/home/lincoo/Documents'
+let g:netrw_dirhist_6='/home/lincoo'
+let g:netrw_dirhist_5='/home/lincoo/.config/sway'
+let g:netrw_dirhist_4='/home/lincoo/.config/termite'
+let g:netrw_dirhist_3='/home/lincoo/.config/i3status'
+let g:netrw_dirhist_2='/home/lincoo/.vim/plugged/vim-snippets/snippets'
+let g:netrw_dirhist_1='/home/lincoo/.vim/plugged/vim-snippets'
