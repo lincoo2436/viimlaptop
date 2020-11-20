@@ -36,6 +36,8 @@ map <LEADER>rc :e ~/.vimrc<CR>
 map <LEADER>w :CocList yank<CR>
 map <LEADER>u :bl <CR>
 map <LEADER>i :bn <CR>
+map <LEADER>j 10j <CR>
+map <LEADER>k 10k <CR>
 "map <LEADER>b :CocList --top maps<CR>
 map <LEADER>s :CocCommand translator.popup<CR>
 "删除特殊符号和空行
@@ -44,9 +46,13 @@ map <LEADER>qm :%s/^M//gg <CR>
 map <LEADER>qn :%s/\n//gg <CR>
 nmap <leader>qd gg=G 
 vmap <leader>qc vg_ 
+map <leader>ms <ESC>/<--><CR>:nohlsearch<CR>c4l
+map <leader>mm <ESC>a <--><ESC>
 "-----
-"浮动窗口
-map <LEADER>0 :FloatermToggle<CR>
+"浮动窗口 
+""floaterm key set
+let g:floaterm_keymap_toggle = '<Leader>0'
+let g:floaterm_keymap_new    = '<F2>'
 "打开历史文件 
 nmap <leader>h :Startify<CR>
 "leader config-------
@@ -54,6 +60,7 @@ nmap <leader>h :Startify<CR>
 "" 前后标签
 map tn :+tabnext<CR>
 map tp :-tabnext<CR>
+nmap gt vg_ 
 set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
@@ -80,7 +87,7 @@ map sn :set nosplitright<CR>:vsplit<CR>:set splitright<CR>
 map si :set splitright<CR>:vsplit<CR>
 " 去掉输入错误的提示声音
 set noeb
-" 在处理未保存或只读文件的时候，弹出确认
+" :在处理未保存或只读文件的时候，弹出确认
 set confirm
 " 自动缩进
 set autoindent
@@ -123,8 +130,8 @@ Plug 'francoiscabrol/ranger.vim'
 Plug 'voldikss/vim-floaterm'
 Plug 'liuchengxu/vista.vim'
 Plug 'dhruvasagar/vim-table-mode'
-"Plug 'nvie/vim-flake8'
-"Plug 'jnurmine/Zenburn'
+Plug 'Neur1n/neuims', {'on': 'IMSToggle'}
+Plug 'gcmt/wildfire.vim'
 " Other visual enhancement
 Plug 'nathanaelkane/vim-indent-guides'
 Plug 'itchyny/vim-cursorword'
@@ -182,8 +189,6 @@ Plug 'mbbill/undotree/'
 "  Plug 'roxma/vim-hug-neovim-rpc'
 "endif
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-"let g:deoplete#enable_at_startup = 1
-"Plug 'deoplete-plugins/deoplete-jedi'
 " Initialize plugin system
 call plug#end()
 ""映射快捷键
@@ -406,14 +411,11 @@ function! Sh_run()
 endfunction 
 :nmap <F7> :w! ~/dwmscript/ShModle.sh<CR>:call Sh_run()<CR><CR>
 "map <Leader> <Plug>(easymotion-prefix)
-"set which key map
-nnoremap <leader>a  :WhichKey '<Space>'<CR>
 ""打开文件时恢复光标位置
 autocmd BufReadPost *
 			\ if line("'\"") > 1 && line("'\"") <= line("$") |
 			\   exe "normal! g`\"" |
 			\ endif
-""vista设置
 "vimspector设置 From CW
 let g:vimspector_enable_mappings = 'HUMAN'
 function! s:read_template_into_buffer(template)
@@ -429,3 +431,91 @@ noremap <leader>vs :tabe .vimspector.json<CR>:LoadVimSpectorJsonTemplate<CR>
 sign define vimspectorBP text=☛ texthl=Normal
 sign define vimspectorBPDisabled text=☞ texthl=Normal
 sign define vimspectorPC text=🔶 texthl=SpellBad
+let g:loaded_table_mode = 1
+let g:table_mode_corner='|'
+let g:neuims = {
+			\ 'im': 'Japenese (JP)',
+			\ 'status': 0,
+			\ 'keyboards': {
+			\   'Japenese (JP)': 'xkb:jp::jpn',
+			\   'Rime': 'rime',
+			\ },
+			\ }
+
+"" coc-nvim config
+inoremap <silent><expr> <TAB>
+			\ pumvisible() ? "\<C-n>" :
+			\ <SID>check_back_space() ? "\<TAB>" :
+			\ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+	let col = col('.') - 1
+	return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+if has('nvim')
+	inoremap <silent><expr> <c-space> coc#refresh()
+else
+	inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+
+" Make <CR> auto-select the first completion item and notify coc.nvim to
+" format on enter, <cr> could be remapped by other vim plugin
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+			\: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list.
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation.
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+	if (index(['vim','help'], &filetype) >= 0)
+		execute 'h '.expand('<cword>')
+	elseif (coc#rpc#ready())
+		call CocActionAsync('doHover')
+	else
+		execute '!' . &keywordprg . " " . expand('<cword>')
+	endif
+endfunction
+
+" Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Use <c-m> to trigger completion.
+if has('nvim')
+  inoremap <silent><expr> <c-o> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+"" coc-nvim extensions 
+
+let g:coc_global_extensions =[
+	\ 'coc-yank',
+	\ 'coc-word',
+	\ 'coc-translator',
+	\ 'coc-snippets',
+	\ 'coc-highlight',
+	\ 'coc-fzf-preview',
+	\ 'coc-floaterm',
+	\ 'coc-actions',
+	\ 'coc-tsserver',
+	\ 'coc-sh',
+	\ 'coc-python',
+	\ 'coc-markmap',
+	\ 'coc-json',
+	\ 'coc-html',
+	\ 'coc-go',
+	\ 'coc-marketplace',
+	\ 'coc-vimlsp']
