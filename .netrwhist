@@ -1,5 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhistcnt =5
+let g:netrw_dirhistcnt =6
+let g:netrw_dirhist_6='/home/lincoo'
 let g:netrw_dirhist_5='/home/lincoo/go/wmwm/config'
 let g:netrw_dirhist_4='/home/lincoo/Documents/kancloud/patentlaw'
 let g:netrw_dirhist_3='/home/lincoo/.i3'
@@ -9,4 +10,3 @@ let g:netrw_dirhist_0='/home/lincoo/dwmscript/dswitcher'
 let g:netrw_dirhist_9='/home/lincoo/software/2-plan'
 let g:netrw_dirhist_8='/home/lincoo/software'
 let g:netrw_dirhist_7='/home/lincoo/Documents'
-let g:netrw_dirhist_6='/home/lincoo'
