@@ -5,6 +5,7 @@ set nu              " 显示行号
 set guifont=Courier_New:h10:cANSI   " 设置字体  
 set ruler           " 显示标尺  
 set showcmd         " 输入的命令显示出来，看的清楚些  
+set mouse=a
 set relativenumber  " 设置相对行号
 "set whichwrap+=<,>,h,l   " 允许backspace和光标键跨越行边界(不建议)  
 set foldenable      " 允许折叠  
@@ -25,27 +26,27 @@ let mapleader =" "
 nmap <leader>e :vsplit<CR>
 map <leader>qq :q<CR>
 nmap <leader>f :FZF<CR>
-nmap <leader>p "+p 
-vmap <leader>p "+p 
-vmap <leader>y "+y 
-nmap <leader>o 0v$"+y 
-nmap <leader>v :Vista <CR>
+nmap <leader>p "+p
+vmap <leader>p "+p
+vmap <leader>y "+y
+nmap <leader>o 0v$"+y
+nmap <leader>v :Vista ctags<CR>
 map <LEADER>rc :e ~/.vimrc<CR>
 ""COC shortcut
 "map <LEADER>l :CocList
 map <LEADER>w :CocList yank<CR>
-map <LEADER>u :bl <CR>
-map <LEADER>i :bn <CR>
-map <LEADER>j 10j <CR>
-map <LEADER>k 10k <CR>
+map <LEADER>u :bl<CR>
+map <LEADER>i :bn<CR>
+map <LEADER>j 10j<CR>
+map <LEADER>k 10k<CR>
 "map <LEADER>b :CocList --top maps<CR>
 map <LEADER>s :CocCommand translator.popup<CR>
 "删除特殊符号和空行
-map <LEADER>qa :g/^\s*$/d <CR>
-map <LEADER>qm :%s/^M//gg <CR>
-map <LEADER>qn :%s/\n//gg <CR>
-nmap <leader>qd gg=G 
-vmap <leader>qc vg_ 
+map <LEADER>qa :g/^\s*$/d<CR>
+map <LEADER>qm :%s/^M//gg<CR>
+map <LEADER>qn :%s/\n//gg<CR>
+nmap <leader>qd gg=G
+vmap <leader>qc vg_
 map <leader>ms <ESC>/<--><CR>:nohlsearch<CR>c4l
 map <leader>mm <ESC>a <--><ESC>
 "-----
@@ -58,8 +59,16 @@ nmap <leader>h :Startify<CR>
 "leader config-------
 "其他快捷键
 "" 前后标签
-map tn :+tabnext<CR>
-map tp :-tabnext<CR>
+nmap tu :tabnew<CR>
+nmap tn :+tabnext<CR>
+nmap tp :-tabnext<CR>
+nmap tbn :bnext<CR>
+nmap tbp :bprevious<CR>
+"调整窗口大小
+nmap <down> :resize+3<CR>
+nmap <up> :resize-3<CR>
+nmap <right> :vertical resize-3<CR>
+nmap <left> :vertical resize+3<CR>
 nmap gt vg_ 
 set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
@@ -124,8 +133,10 @@ set helplang=cn
 call plug#begin('~/.vim/plugged')
 "On-demand loading im plugged
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggler' }
+Plug 'scrooloose/nerdcommenter'
 " Plugin outside ~/.vim/plugged with post-update hook
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 Plug 'francoiscabrol/ranger.vim'
 Plug 'voldikss/vim-floaterm'
 Plug 'liuchengxu/vista.vim'
@@ -137,8 +148,15 @@ Plug 'nathanaelkane/vim-indent-guides'
 Plug 'itchyny/vim-cursorword'
 Plug 'tmhedberg/SimpylFold'
 Plug 'mg979/vim-visual-multi'
+Plug 'vim-voom/voom'
+" 文件浏览器显示好看的图标
+Plug 'ryanoasis/vim-devicons'
+" 对图标进行美化
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 "Plug 'godlygeek/tabular'
-Plug 'gabrielelana/vim-markdown'
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+"Plug 'gabrielelana/vim-markdown'
 "Plug  'Valloric/YouCompleteMe'
 Plug 'iamcco/markdown-preview.vim'
 Plug 'tpope/vim-surround'
@@ -165,7 +183,7 @@ Plug 'puremourning/vimspector', { 'do': './install_gadget.py --enable-python --e
 " Snippets are separated from the engine. Add this if you want them:
 Plug 'honza/vim-snippets'
 Plug 'liuchengxu/graphviz.vim'
-"Plug 'liuchengxu/vim-which-key'
+Plug 'liuchengxu/vim-which-key', { 'on': ['WhichKey', 'WhichKey!'] }
 " the framework
 "Plug 'roxma/nvim-completion-manager'
 "Plug 'prabirshrestha/asyncomplete.vim'
@@ -200,8 +218,9 @@ nnoremap <C-H> <C-W><C-H>
 nnoremap [<space>  :<c-u>put! =repeat(nr2char(10), v:count1)<cr>'[
 nnoremap ]<space>  :<c-u>put =repeat(nr2char(10), v:count1)<cr>
 "vg_选择到结尾但是不包含最后一个字符
-nmap <C-f> :NERDTreeToggle<CR>
-set laststatus=2 
+nmap <C-f> :CocCommand explorer <CR>
+"nmap <C-f> :NERDTreeToggle<CR>
+"set laststatus=2 
 function! Buf_total_num()
 	return len(filter(range(1, bufnr('$')), 'buflisted(v:val)'))
 endfunction
@@ -333,7 +352,7 @@ silent! unmap <LEADER>ig
 autocmd WinEnter * silent! unmap <LEADER>ig
 " ranger set
 let g:ranger_map_keys = 0
-map <leader>o :Ranger<CR> 
+map <leader>n :Ranger<CR> 
 "" coc-snippets set
 " Use <C-l> for trigger snippet expand.
 imap <C-l> <Plug>(coc-snippets-expand)
@@ -358,23 +377,23 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap <Leader>g [fzf-p]
 xmap <Leader>g [fzf-p]
 
-nnoremap <silent> [fzf-p]p     :<C-u>CocCommand fzf-preview.FromResources project_mru git<CR>
-nnoremap <silent> [fzf-p]gs    :<C-u>CocCommand fzf-preview.GitStatus<CR>
-nnoremap <silent> [fzf-p]ga    :<C-u>CocCommand fzf-preview.GitActions<CR>
-nnoremap <silent> [fzf-p]b     :<C-u>CocCommand fzf-preview.Buffers<CR>
-nnoremap <silent> [fzf-p]B     :<C-u>CocCommand fzf-preview.AllBuffers<CR>
-nnoremap <silent> [fzf-p]o     :<C-u>CocCommand fzf-preview.FromResources buffer project_mru<CR>
-nnoremap <silent> [fzf-p]<C-o> :<C-u>CocCommand fzf-preview.Jumps<CR>
-nnoremap <silent> [fzf-p]g;    :<C-u>CocCommand fzf-preview.Changes<CR>
-nnoremap <silent> [fzf-p]/     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=--no-sort --add-fzf-arg=--query="'"<CR>
-nnoremap <silent> [fzf-p]*     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=--no-sort --add-fzf-arg=--query="'<C-r>=expand('<cword>')<CR>"<CR>
-nnoremap          [fzf-p]gr    :<C-u>CocCommand fzf-preview.ProjectGrep<Space>
+nmap <silent> [fzf-p]p     :<C-u>CocCommand fzf-preview.FromResources project_mru git<CR>
+nmap <silent> [fzf-p]gs    :<C-u>CocCommand fzf-preview.GitStatus<CR>
+nmap <silent> [fzf-p]ga    :<C-u>CocCommand fzf-preview.GitActions<CR>
+nmap <silent> [fzf-p]b     :<C-u>CocCommand fzf-preview.Buffers<CR>
+nmap <silent> [fzf-p]B     :<C-u>CocCommand fzf-preview.AllBuffers<CR>
+nmap <silent> [fzf-p]o     :<C-u>CocCommand fzf-preview.FromResources buffer project_mru<CR>"{{{
+nmap <silent> [fzf-p]<C-o> :<C-u>CocCommand fzf-preview.Jumps<CR>"}}}
+nmap <silent> [fzf-p]g;    :<C-u>CocCommand fzf-preview.Changes<CR>
+nmap <silent> [fzf-p]/     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=--no-sort --add-fzf-arg=--query="'"<CR>
+nmap <silent> [fzf-p]*     :<C-u>CocCommand fzf-preview.Lines --add-fzf-arg=--no-sort --add-fzf-arg=--query="'<C-r>=expand('<cword>')<CR>"<CR>
+nmap          [fzf-p]gr    :<C-u>CocCommand fzf-preview.ProjectGrep<Space>
 xnoremap          [fzf-p]gr    "sy:CocCommand   fzf-preview.ProjectGrep<Space>-F<Space>"<C-r>=substitute(substitute(@s, '\n', '', 'g'), '/', '\\/', 'g')<CR>"
-nnoremap <silent> [fzf-p]t     :<C-u>CocCommand fzf-preview.BufferTags<CR>
+nmap <silent> [fzf-p]t     :<C-u>CocCommand fzf-preview.BufferTags<CR>
 nnoremap <silent> [fzf-p]q     :<C-u>CocCommand fzf-preview.QuickFix<CR>
 nnoremap <silent> [fzf-p]l     :<C-u>CocCommand fzf-preview.LocationList<CR>
 
-"" markdown2ctags config
+" markdown2ctags config
 " Add support for markdown files in tagbar.
 let g:tagbar_type_markdown = {
 			\ 'ctagstype': 'markdown',
@@ -519,3 +538,9 @@ let g:coc_global_extensions =[
 	\ 'coc-go',
 	\ 'coc-marketplace',
 	\ 'coc-vimlsp']
+"autocmd BufNewFile *.md *.txt exec ":set nospell"
+""whichkey config
+nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
+set timeoutlen=500
+"取消markdown插件的折叠
+let g:vim_markdown_folding_disabled = 1
